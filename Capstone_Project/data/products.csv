@@ -1,0 +1,106 @@
+product_id,product_name,category,purchase_date,price
+P001,Laptop Pro 15,Electronics,2025-01-15,1200.00
+P002,Smart Fridge X,Appliances,2025-03-10,850.00
+P003,Noise Cancelling Headphones,Electronics,2025-06-20,200.00
+P004,4K OLED TV,Electronics,2024-11-22,1800.00
+P005,Air Fryer Max,Kitchen,2025-02-05,140.00
+P006,Gaming Console Z,Electronics,2025-07-12,499.00
+P007,Robot Vacuum S,Home,2025-05-30,330.00
+P008,Smart Thermostat,Home,2024-12-18,180.00
+P009,Blender Pro 900,Kitchen,2025-04-08,120.00
+P010,Electric Toothbrush,Beauty,2025-08-14,75.00
+P011,Wireless Speaker,Electronics,2025-09-01,150.00
+P012,Espresso Machine,Kitchen,2024-10-27,250.00
+P013,Smartwatch Series 6,Electronics,2025-06-03,280.00
+P014,Portable Projector,Electronics,2025-01-28,220.00
+P015,Pressure Cooker,Kitchen,2024-11-09,95.00
+P016,Standing Desk,Office,2025-03-18,420.00
+P017,Office Chair Elite,Office,2025-05-12,260.00
+P018,Wireless Keyboard,Office,2025-07-25,65.00
+P019,Noise Reducing Earbuds,Electronics,2024-12-05,130.00
+P020,Smart Doorbell,Home,2025-02-20,110.00
+P021,Electric Bike,Outdoors,2025-06-19,950.00
+P022,Yoga Mat Pro,Fitness,2024-09-14,45.00
+P023,Protein Shake Blender,Fitness,2025-01-07,99.00
+P024,Smart Lighting Kit,Home,2025-04-02,160.00
+P025,Air Purifier,Home,2025-05-08,210.00
+P026,Pet Grooming Kit,Home,2025-08-30,55.00
+P027,Digital Camera,Electronics,2024-10-05,690.00
+P028,Bluetooth Headset,Electronics,2025-03-29,85.00
+P029,Home Security Hub,Home,2025-09-17,240.00
+P030,Electric Kettle,Kitchen,2024-11-21,49.99
+P031,Smart Scale,Health,2025-07-03,59.00
+P032,Camping Tent,Outdoors,2025-06-27,180.00
+P033,Grill Master 5,Outdoors,2025-08-09,320.00
+P034,Food Processor,Kitchen,2025-02-14,135.00
+P035,Desk Lamp,Office,2025-01-12,40.00
+P036,Wireless Mouse,Office,2024-12-28,29.99
+P037,Streaming Stick,Electronics,2025-03-04,55.00
+P038,Portable Charger,Electronics,2025-06-08,35.00
+P039,Smart Water Bottle,Fitness,2025-05-16,49.00
+P040,Ceramic Cookware Set,Kitchen,2024-10-30,220.00
+P041,Action Camera,Electronics,2025-07-19,310.00
+P042,Indoor Garden Kit,Garden,2025-04-25,85.00
+P043,Air Mattress,Home,2025-08-02,75.00
+P044,Window Air Conditioner,Appliances,2025-06-12,380.00
+P045,Floor Steamer,Home,2025-01-24,95.00
+P046,Rice Cooker,Kitchen,2025-03-22,60.00
+P047,Smart Lock,Home,2024-11-18,140.00
+P048,Electric Grill,Kitchen,2025-07-29,180.00
+P049,Indoor Bike Trainer,Fitness,2025-05-20,350.00
+P050,Photo Printer,Electronics,2025-09-05,130.00
+P051,Noise Cancelling Microphone,Electronics,2025-02-26,120.00
+P052,Memory Foam Pillow,Home,2025-04-12,55.00
+P053,Programmable Slow Cooker,Kitchen,2024-10-14,68.00
+P054,Smartphone Model X,Electronics,2025-08-21,950.00
+P055,Electric Lawn Mower,Garden,2025-06-03,420.00
+P056,Hydroponic Grow Box,Garden,2025-09-10,210.00
+P057,Pet Camera,Home,2025-05-03,140.00
+P058,Yoga Block Set,Fitness,2025-01-29,28.00
+P059,Solar Lantern,Outdoors,2024-12-11,34.00
+P060,Car Vacuum Cleaner,Appliances,2025-03-08,59.00
+P061,Travel Backpack,Outdoors,2025-07-15,85.00
+P062,Smart Mirror,Beauty,2025-04-03,220.00
+P063,Hair Dryer Pro,Beauty,2025-06-25,80.00
+P064,Electric Hand Mixer,Kitchen,2025-02-09,45.00
+P065,Smart Air Fryer,Kitchen,2025-08-13,170.00
+P066,Wireless Charging Pad,Electronics,2024-11-30,38.00
+P067,Portable Speaker XL,Electronics,2025-05-28,190.00
+P068,Camping Stove,Outdoors,2025-07-07,65.00
+P069,Pressure Washer,Garden,2025-06-01,280.00
+P070,Espresso Grinder,Kitchen,2024-10-22,95.00
+P071,Desk Organizer,Office,2025-03-15,30.00
+P072,Wireless Monitor Stand,Office,2025-09-03,120.00
+P073,Smart Pet Feeder,Home,2025-04-30,170.00
+P074,LED Strip Lighting,Home,2025-08-04,45.00
+P075,Digital Picture Frame,Electronics,2025-01-18,110.00
+P076,Smart Backpack,Outdoors,2025-06-21,120.00
+P077,Standing Mixer,Kitchen,2024-12-20,270.00
+P078,Hair Straightener,Beauty,2025-02-18,65.00
+P079,Massage Gun,Health,2025-07-27,130.00
+P080,Indoor Cycling Shoes,Fitness,2025-05-11,99.00
+P081,Noise Reducing Curtains,Home,2025-03-02,85.00
+P082,Water Filter Pitcher,Kitchen,2025-08-17,55.00
+P083,Smart Bike Helmet,Outdoors,2025-06-15,95.00
+P084,Automatic Pan Stirrer,Kitchen,2025-01-28,25.00
+P085,Digital Thermometer,Health,2024-11-23,35.00
+P086,Pet Bed Deluxe,Home,2025-09-12,75.00
+P087,Acoustic Guitar,Electronics,2025-04-14,240.00
+P088,Running Shoes, Fitness,2025-07-23,110.00
+P089,Kitchen Scale,Kitchen,2025-02-07,28.00
+P090,Gas Grill,Outdoors,2025-06-29,520.00
+P091,Portable Ice Maker,Appliances,2025-08-10,160.00
+P092,Smart Window Shades,Home,2024-10-29,210.00
+P093,Electric Scooter,Outdoors,2025-05-27,680.00
+P094,Facial Steamer,Beauty,2025-01-09,40.00
+P095,Wireless Gaming Mouse,Electronics,2025-03-11,75.00
+P096,Smart Kitchen Scale,Kitchen,2025-06-05,48.00
+P097,Compact Dishwasher,Appliances,2025-07-31,520.00
+P098,Pet Training Collar,Home,2025-04-19,65.00
+P099,Garden Tool Set,Garden,2025-08-27,90.00
+P100,Smart Rice Cooker,Kitchen,2025-09-22,112.00
+
+
+
+
+
