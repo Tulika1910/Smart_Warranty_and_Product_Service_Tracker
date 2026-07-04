@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS warranties (
 
 -- Service Requests Table
 CREATE TABLE IF NOT EXISTS service_requests (
-    request_id VARCHAR(20) PRIMARY KEY,
-    product_id VARCHAR(20),
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id VARCHAR(255),
     issue_description TEXT,
-    status VARCHAR(50),
-    request_date DATE,
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 

@@ -5,9 +5,9 @@ import mysql.connector
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Tisyadb17@",      # change this
+    password="tulika",      # change this
     database="smart_warranty_db"
-)
+) 
 
 cursor = conn.cursor()
 
