@@ -12,9 +12,8 @@ from streamlit_mic_recorder import speech_to_text
 import os
 
 # --- API Configuration ---
-# Use one API key. Ensure GOOGLE_API_KEY is configured in your project's environment.
-genai.configure(api_key="YOUR_API_KEY") 
-model = genai.GenerativeModel('gemini-1.5-flash')
+genai.configure(api_key="YOURKEY") 
+model = genai.GenerativeModel('gemini-3.5-flash')
 
 # --- Database Helper Functions ---
 def get_data(query):
@@ -71,7 +70,7 @@ else:
     # --- Sidebar & Navigation ---
     with st.sidebar:
         st.title("Navigation")
-        choice = st.selectbox("Menu", ["Dashboard", "Add Service Request", "Warranty AI Agent"])
+        choice = st.selectbox("Menu", ["Dashboard", "Add Service Request", "Warranty AI Agent", "Live Service Tracker"])
         st.markdown("---")
         st.subheader("⚡ Quick View")
         df_prod = get_data("SELECT * FROM products")
@@ -158,3 +157,34 @@ else:
                 with get_db_connection().begin() as conn:
                     conn.execute(text(insert_cmd))
                 st.success("Product logged!")
+
+    elif choice == "Live Service Tracker":
+        st.title("🔄 Live Service Status")
+        
+        # --- Update Status Form ---
+        with st.expander("Update Service Request Status"):
+            with st.form("status_update_form"):
+                req_id = st.number_input("Request ID", min_value=1, step=1)
+                new_status = st.selectbox("New Status", ["Pending", "In Progress", "Completed", "Cancelled"])
+                
+                if st.form_submit_button("Update Status"):
+                    # 1. Update the main status using request_id
+                    query = text("UPDATE service_requests SET status = :status WHERE request_id = :id")
+                    with get_db_connection().begin() as conn:
+                        conn.execute(query, {"status": new_status, "id": req_id})
+                    
+                    if new_status == "Completed":
+                        history_query = text("""
+                            INSERT INTO completed_requests (request_id, completion_date) 
+                            VALUES (:id, :date)
+                        """)
+                        with get_db_connection().begin() as conn:
+                            conn.execute(history_query, {"id": req_id, "date": date.today()})
+                        st.toast("Request moved to Completed History! 🎉", icon="✅")
+                    else:
+                        st.toast(f"Status Updated: Request {req_id} is now {new_status}", icon="ℹ️")
+                    
+                    st.rerun()
+
+        df_reqs = get_data("SELECT * FROM service_requests")
+        st.dataframe(df_reqs, use_container_width=True)
