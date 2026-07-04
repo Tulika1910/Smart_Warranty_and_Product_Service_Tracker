@@ -1,17 +1,36 @@
 import streamlit as st
 import pandas as pd
+import pymupdf
+import plotly.express as px
 from datetime import date
 from sqlalchemy import text
 from auth import login_user, create_user
 from database_initialise import get_db_connection
+import google.generativeai as genai
+from PIL import Image
+from streamlit_mic_recorder import speech_to_text
+import os
 
+# --- API Configuration ---
+# Use one API key. Ensure GOOGLE_API_KEY is configured in your project's environment.
+genai.configure(api_key="YOUR_API_KEY") 
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+# --- Database Helper Functions ---
 def get_data(query):
-    engine = get_db_connection()
-    return pd.read_sql(query, engine)
+    try:
+        engine = get_db_connection()
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        st.error(f"Database Query Error: {e}")
+        return pd.DataFrame()
 
 def sync_csv_to_db():
     try:
         file_path = r'C:\Users\agraw\Desktop\Capstone_Project\data\products.csv'
+        if not os.path.exists(file_path):
+            st.error("Data file missing at the specified path.")
+            return False
         df = pd.read_csv(file_path)
         engine = get_db_connection()
         with engine.begin() as conn:
@@ -21,12 +40,16 @@ def sync_csv_to_db():
             conn.execute(text("SET FOREIGN_KEY_CHECKS = 1;"))
         return True
     except Exception as e:
-        st.error(f"Sync Error: {e}")
+        st.error(f"Sync Process Error: {e}")
         return False
 
-if 'user' not in st.session_state:
-    st.session_state.user = None
+# --- UI Layout Initialization ---
+st.set_page_config(page_title="Smart Warranty Tracker", layout="wide", page_icon="🛡️")
 
+if 'user' not in st.session_state: st.session_state.user = None
+if 'messages' not in st.session_state: st.session_state.messages = []
+
+# --- Authentication Logic ---
 if not st.session_state.user:
     st.title("Smart Warranty & Service Tracker")
     tab1, tab2 = st.tabs(["Login", "Sign Up"])
@@ -43,62 +66,95 @@ if not st.session_state.user:
         email_s = st.text_input("Email", key="s_email")
         password_s = st.text_input("Password", type="password", key="s_pass")
         if st.button("Sign Up"):
-            if create_user(email_s, password_s): st.success("Created! Please login.")
+            if create_user(email_s, password_s): st.success("Created! Please proceed to login.")
 else:
-    st.sidebar.title("Navigation")
-    if st.sidebar.button("Logout"):
-        st.session_state.user = None
-        st.rerun()
-    
-    choice = st.sidebar.selectbox("Menu", ["Dashboard", "Add Service Request", "Warranty AI Agent"])
+    # --- Sidebar & Navigation ---
+    with st.sidebar:
+        st.title("Navigation")
+        choice = st.selectbox("Menu", ["Dashboard", "Add Service Request", "Warranty AI Agent"])
+        st.markdown("---")
+        st.subheader("⚡ Quick View")
+        df_prod = get_data("SELECT * FROM products")
+        if not df_prod.empty:
+            st.metric("Total Products", len(df_prod))
+            if 'warranty_expiry' in df_prod.columns:
+                st.metric("Expiring Soon", len(df_prod[pd.to_datetime(df_prod['warranty_expiry']) < pd.Timestamp.now()]))
+        if st.button("Logout"):
+            st.session_state.user = None
+            st.rerun()
 
+    # --- Dashboard Page Logic ---
     if choice == "Dashboard":
-        st.subheader("Your Products")
-        if st.button("Sync CSV Data"):
-            if sync_csv_to_db(): 
-                st.success("Data Loaded!")
-                st.rerun()
-        try:
-            st.dataframe(get_data("SELECT * FROM products"))
-        except Exception:
-            st.warning("No data found. Please sync CSV.")
+        st.title("📊 Warranty Overview")
+        df_prod = get_data("SELECT * FROM products")
+        df_reqs = get_data("SELECT * FROM service_requests")
+        
+        # Tier 1: Graphs
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Warranty Expiry Heatmap")
+            if not df_prod.empty and 'warranty_expiry' in df_prod.columns:
+                df_prod['warranty_expiry'] = pd.to_datetime(df_prod['warranty_expiry'])
+                fig1 = px.histogram(df_prod, x="warranty_expiry", title="Expiry Distribution")
+                st.plotly_chart(fig1, use_container_width=True)
+        with col2:
+            st.subheader("Requests Overview")
+            if not df_reqs.empty:
+                fig2 = px.pie(df_reqs, names='status', title="Request Status Breakdown")
+                st.plotly_chart(fig2, use_container_width=True)
+        
+        # Tier 2: Data Tables
+        col3, col4 = st.columns(2)
+        with col3:
+            st.subheader("📦 Product Inventory")
+            if st.button("Sync CSV Data"): sync_csv_to_db(); st.rerun()
+            st.dataframe(df_prod, use_container_width=True, hide_index=True)
+        with col4:
+            st.subheader("🛠️ Active Service Requests")
+            st.dataframe(df_reqs, use_container_width=True, hide_index=True)
 
+    # --- Service Request Page ---
     elif choice == "Add Service Request":
         st.subheader("Submit a New Service Request")
         with st.form("service_form"):
             prod_id = st.text_input("Product ID")
             issue = st.text_area("Issue Description")
             deadline = st.date_input("Service Deadline")
-            
-            if st.form_submit_button("Submit Request"):
-                if prod_id and issue:
-                    engine = get_db_connection()
-                    # Using current date for request_date
-                    query = text("""
-                        INSERT INTO service_requests (product_id, issue_description, status, deadline, request_date) 
-                        VALUES (:pid, :desc, 'Pending', :deadline, :req_date)
-                    """)
-                    with engine.begin() as conn:
-                        conn.execute(query, {
-                            "pid": prod_id, 
-                            "desc": issue, 
-                            "deadline": deadline, 
-                            "req_date": date.today()
-                        })
-                    st.success("Request saved successfully!")
-                    st.rerun()
-                else: st.error("Please fill in all fields.")
+            if st.form_submit_button("Submit"):
+                query = text("INSERT INTO service_requests (product_id, issue_description, status, deadline, request_date) VALUES (:pid, :desc, 'Pending', :deadline, :req_date)")
+                with get_db_connection().begin() as conn:
+                    conn.execute(query, {"pid": prod_id, "desc": issue, "deadline": deadline, "req_date": date.today()})
+                st.success("Request saved!"); st.rerun()
+        st.dataframe(get_data("SELECT * FROM service_requests"))
 
-        st.subheader("Your Past Service Requests")
-        try:
-            df_requests = get_data("SELECT * FROM service_requests")
-            st.dataframe(df_requests)
-        except Exception:
-            st.info("No service requests found.")
-
+    # --- Warranty AI Agent Page ---
     elif choice == "Warranty AI Agent":
-        st.subheader("Warranty AI Agent")
-        st.write("Ask questions about your product warranties or service status.")
-        if prompt := st.chat_input("How can I help you?"):
-            st.chat_message("user").write(prompt)
-            st.chat_message("assistant").write("AI integration coming soon!")
+        st.title("🤖 Warranty AI Agent")
+        audio_text = speech_to_text(language='en', start_prompt="🎙️ Record Voice", stop_prompt="⏹️")
+        uploaded_file = st.file_uploader("Upload Bill/Warranty (Optional)", type=["jpg", "png", "pdf"])
+        
+        for msg in st.session_state.messages: st.chat_message(msg["role"]).write(msg["content"])
+        
+        query = audio_text or st.chat_input("Ask your question about product warranty...")
+        if query:
+            st.chat_message("user").write(query)
+            st.session_state.messages.append({"role": "user", "content": query})
+            context = get_data("SELECT * FROM products").to_string()
+            
+            # Hybrid processing
+            payload = [f"Context: {context}. User Question: {query}"]
+            if uploaded_file:
+                if uploaded_file.name.endswith(".pdf"):
+                    doc = pymupdf.open(stream=uploaded_file.read(), filetype="pdf")
+                    payload.append("Text: " + " ".join([page.get_text() for page in doc]))
+                else: payload.append(Image.open(uploaded_file))
+            
+            response = model.generate_content(payload)
+            st.chat_message("assistant").write(response.text)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
+            
+            if "add this" in query.lower() and uploaded_file and st.button("Confirm: Log to Database"):
+                insert_cmd = model.generate_content(f"Convert info to SQL INSERT: {response.text}").text
+                with get_db_connection().begin() as conn:
+                    conn.execute(text(insert_cmd))
+                st.success("Product logged!")
