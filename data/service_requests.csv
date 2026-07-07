@@ -1,0 +1,101 @@
+request_id,product_id,issue_description,status,request_date
+SR001,P001,Screen flickering intermittently,Open,2026-06-25
+SR002,P003,Left earbud audio silent,Resolved,2026-05-10
+SR003,P002,Compressor making loud humming noise,In Progress,2026-06-18
+SR004,P004,Remote control not pairing with TV,Open,2026-06-12
+SR005,P005,Air fryer basket coating peeling,Resolved,2026-04-22
+SR006,P006,Console overheats during gameplay,In Progress,2026-06-21
+SR007,P007,Robot vacuum stops before completing room,Open,2026-06-27
+SR008,P008,Thermostat disconnects from Wi-Fi,Resolved,2026-03-15
+SR009,P009,Blender motor smells burnt,Open,2026-06-08
+SR010,P010,Toothbrush charging base not working,Resolved,2026-02-19
+SR011,P011,Speaker crackles at high volume,In Progress,2026-06-02
+SR012,P012,Espresso machine leaking near portafilter,Open,2026-06-24
+SR013,P013,Smartwatch battery drains quickly,Resolved,2026-05-28
+SR014,P014,Projector image has dark corner,Open,2026-06-10
+SR015,P015,Pressure valve releasing steam constantly,In Progress,2026-06-19
+SR016,P016,Desk lift motor moves unevenly,Open,2026-06-26
+SR017,P017,Chair height adjustment slips down,Resolved,2026-04-09
+SR018,P018,Keyboard spacebar intermittently fails,Open,2026-06-17
+SR019,P019,Earbuds case not charging,Resolved,2026-01-30
+SR020,P020,Doorbell motion alerts delayed,In Progress,2026-06-14
+SR021,P021,E-bike assist cuts out uphill,Open,2026-06-23
+SR022,P022,Yoga mat surface peeling,Closed,2026-02-04
+SR023,P023,Portable blender blade not spinning,Resolved,2026-03-21
+SR024,P024,Lighting kit colors not syncing,Open,2026-06-11
+SR025,P025,Air purifier fan rattling,In Progress,2026-06-20
+SR026,P026,Grooming trimmer pulls hair,Resolved,2026-05-02
+SR027,P027,Camera autofocus hunting constantly,Open,2026-06-05
+SR028,P028,Headset microphone volume too low,Resolved,2026-04-18
+SR029,P029,Security hub fails firmware update,In Progress,2026-06-28
+SR030,P030,Kettle shuts off before boiling,Resolved,2026-01-16
+SR031,P031,Scale displays inconsistent weight,Open,2026-06-16
+SR032,P032,Tent zipper jams on corner seam,Closed,2026-05-07
+SR033,P033,Grill igniter clicking without flame,Open,2026-06-22
+SR034,P034,Food processor lid sensor not detecting,In Progress,2026-06-09
+SR035,P035,Desk lamp touch control unresponsive,Resolved,2026-03-08
+SR036,P036,Wireless mouse cursor jumps,Resolved,2026-02-26
+SR037,P037,Streaming stick freezes on startup,Open,2026-06-13
+SR038,P038,Portable charger stops at 50 percent,Resolved,2026-04-27
+SR039,P039,Bottle temperature reading incorrect,Open,2026-06-01
+SR040,P040,Cookware handle feels loose,Closed,2026-05-19
+SR041,P041,Action camera records corrupted video,In Progress,2026-06-15
+SR042,P042,Garden kit pump not circulating water,Open,2026-06-29
+SR043,P043,Air mattress slowly deflates overnight,Resolved,2026-05-24
+SR044,P044,Air conditioner not cooling enough,Open,2026-06-26
+SR045,P045,Floor steamer leaves excess water,Resolved,2026-04-11
+SR046,P046,Rice cooker lid latch broken,In Progress,2026-06-07
+SR047,P047,Smart lock keypad misses digits,Open,2026-06-25
+SR048,P048,Electric grill temperature fluctuates,Resolved,2026-05-14
+SR049,P049,Bike trainer resistance not changing,Open,2026-06-18
+SR050,P050,Photo printer leaves streaks,In Progress,2026-06-04
+SR051,P051,Microphone picks up static noise,Resolved,2026-03-29
+SR052,P052,Pillow lost shape after washing,Closed,2026-05-01
+SR053,P053,Slow cooker outer shell gets too hot,Open,2026-06-03
+SR054,P054,Smartphone screen has dead pixel,In Progress,2026-06-27
+SR055,P055,Lawn mower battery not holding charge,Open,2026-06-21
+SR056,P056,Grow box light timer resets daily,Resolved,2026-05-31
+SR057,P057,Pet camera night vision blurry,Open,2026-06-06
+SR058,P058,Yoga blocks arrived misshapen,Closed,2026-02-22
+SR059,P059,Solar lantern does not charge fully,Resolved,2026-04-05
+SR060,P060,Car vacuum suction is weak,Open,2026-06-12
+SR061,P061,Backpack shoulder strap stitching loose,In Progress,2026-06-24
+SR062,P062,Smart mirror display flickers,Open,2026-06-19
+SR063,P063,Hair dryer shuts off after one minute,Resolved,2026-05-23
+SR064,P064,Hand mixer speed switch stuck,Open,2026-06-10
+SR065,P065,Air fryer app cannot find device,In Progress,2026-06-28
+SR066,P066,Charging pad gets unusually warm,Resolved,2026-03-12
+SR067,P067,Speaker Bluetooth disconnects often,Open,2026-06-17
+SR068,P068,Camping stove flame uneven,Closed,2026-05-11
+SR069,P069,Pressure washer hose coupling leaks,In Progress,2026-06-23
+SR070,P070,Grinder produces uneven grounds,Resolved,2026-04-24
+SR071,P071,Desk organizer drawer sticks,Closed,2026-02-14
+SR072,P072,Monitor stand wobbles on desk,Open,2026-06-20
+SR073,P073,Pet feeder dispenses double portions,In Progress,2026-06-16
+SR074,P074,LED strip adhesive coming loose,Resolved,2026-05-18
+SR075,P075,Picture frame not reading USB drive,Open,2026-06-05
+SR076,P076,Smart backpack charging port loose,In Progress,2026-06-22
+SR077,P077,Stand mixer makes grinding sound,Open,2026-06-14
+SR078,P078,Hair straightener temperature display blank,Resolved,2026-04-07
+SR079,P079,Massage gun stalls on high setting,Open,2026-06-26
+SR080,P080,Cycling shoe buckle cracked,Closed,2026-05-09
+SR081,P081,Curtains missing mounting hooks,Resolved,2026-03-05
+SR082,P082,Water pitcher lid does not seal,Open,2026-06-02
+SR083,P083,Helmet rear light not working,In Progress,2026-06-25
+SR084,P084,Pan stirrer arm stops rotating,Resolved,2026-04-29
+SR085,P085,Thermometer readings vary widely,Open,2026-06-11
+SR086,P086,Pet bed zipper broke,Closed,2026-05-26
+SR087,P087,Guitar pickup output weak,In Progress,2026-06-18
+SR088,P088,Running shoe sole separating,Open,2026-06-27
+SR089,P089,Kitchen scale buttons sticking,Resolved,2026-03-17
+SR090,P090,Gas grill burner will not ignite,Open,2026-06-29
+SR091,P091,Ice maker produces cloudy ice,In Progress,2026-06-21
+SR092,P092,Window shades stop halfway down,Open,2026-06-13
+SR093,P093,Scooter brakes squeal loudly,Resolved,2026-05-20
+SR094,P094,Facial steamer nozzle clogged,Closed,2026-04-02
+SR095,P095,Gaming mouse side button not registering,Open,2026-06-08
+SR096,P096,Smart kitchen scale app sync failed,In Progress,2026-06-24
+SR097,P097,Dishwasher leaves soap residue,Open,2026-06-15
+SR098,P098,Training collar remote range too short,Resolved,2026-05-13
+SR099,P099,Garden shears arrived dull,Closed,2026-03-27
+SR100,P100,Rice cooker voice prompts not playing,Open,2026-06-20
