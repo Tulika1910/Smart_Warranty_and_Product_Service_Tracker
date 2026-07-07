@@ -5,20 +5,37 @@ import plotly.express as px
 from datetime import date
 from sqlalchemy import text
 from auth import login_user, create_user
-from database_initialise import get_db_connection
+from database_initialise import get_db_engine
 import google.generativeai as genai
 from PIL import Image
 from streamlit_mic_recorder import speech_to_text
 import os
+from sync_utils import sync_warranty_data_to_csv
 
 # --- API Configuration ---
 genai.configure(api_key="YOURKEY") 
 model = genai.GenerativeModel('gemini-3.5-flash')
 
+st.markdown("""
+    <style>
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: white;
+    }
+    .stMetric {
+        background-color: #f0f2f6;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- Database Helper Functions ---
 def get_data(query):
     try:
-        engine = get_db_connection()
+        engine = get_db_engine()
         return pd.read_sql(query, engine)
     except Exception as e:
         st.error(f"Database Query Error: {e}")
@@ -26,17 +43,23 @@ def get_data(query):
 
 def sync_csv_to_db():
     try:
-        file_path = r'C:\Users\agraw\Desktop\Capstone_Project\data\products.csv'
+        # Update this path to where your CSV actually lives
+        file_path = r'C:\Users\agraw\Smart_Warranty_and_Product_Service_Tracker\Capstone_Project\data\warranties.csv'
+        
         if not os.path.exists(file_path):
-            st.error("Data file missing at the specified path.")
+            st.error(f"File not found at: {file_path}")
             return False
+            
+        # Read the CSV
         df = pd.read_csv(file_path)
-        engine = get_db_connection()
-        with engine.begin() as conn:
-            conn.execute(text("SET FOREIGN_KEY_CHECKS = 0;"))
-            conn.execute(text("TRUNCATE TABLE products;"))
-            df.to_sql('products', con=conn, if_exists='append', index=False)
-            conn.execute(text("SET FOREIGN_KEY_CHECKS = 1;"))
+        
+        # Connect and push to SQL
+        engine = get_db_engine()
+        # 'replace' will drop the table and recreate it, 
+        # 'append' will just add the rows
+        df.to_sql('warranties', con=engine, if_exists='append', index=False)
+        
+        st.success(f"Successfully pushed {len(df)} records to the database!")
         return True
     except Exception as e:
         st.error(f"Sync Process Error: {e}")
@@ -70,7 +93,13 @@ else:
     # --- Sidebar & Navigation ---
     with st.sidebar:
         st.title("Navigation")
-        choice = st.selectbox("Menu", ["Dashboard", "Add Service Request", "Warranty AI Agent", "Live Service Tracker"])
+        choice = st.selectbox("Menu", [
+    "Dashboard", 
+    "Warranty Selector",  # New 5th Window
+    "Add Service Request", 
+    "Warranty AI Agent", 
+    "Live Service Tracker"
+])
         st.markdown("---")
         st.subheader("⚡ Quick View")
         df_prod = get_data("SELECT * FROM products")
@@ -106,11 +135,64 @@ else:
         col3, col4 = st.columns(2)
         with col3:
             st.subheader("📦 Product Inventory")
+            sync_col1, sync_col2 = st.columns([1, 2])
+
+            if st.button("Push CSV Data to SQL"):
+                if sync_csv_to_db():
+                    st.rerun()
+            
+            # Existing button to pull from DB to CSV (Backup)
+            if st.button("Update Local Backup (CSV)"):
+                sync_warranty_data_to_csv("warranties.csv")
+
+            with sync_col1:
+                if st.button("Sync to CSV"):
+                    with st.spinner("Syncing..."):
+                        if sync_warranty_data_to_csv("warranties.csv"):
+                            st.success("CSV Updated!")
+            with sync_col2:
+                if st.checkbox("Preview CSV"):
+                    try:
+                        st.dataframe(pd.read_csv("warranties.csv"), use_container_width=True)
+                    except:
+                        st.warning("No CSV data found.")
+            
+            if st.button("Sync CSV to DB"): sync_csv_to_db(); st.rerun()
+            st.dataframe(df_prod, use_container_width=True, hide_index=True)
             if st.button("Sync CSV Data"): sync_csv_to_db(); st.rerun()
             st.dataframe(df_prod, use_container_width=True, hide_index=True)
         with col4:
             st.subheader("🛠️ Active Service Requests")
             st.dataframe(df_reqs, use_container_width=True, hide_index=True)
+
+
+    elif choice == "Warranty Selector":
+        st.title("🔎 Product Warranty Lookup")
+        
+        # Load data from warranties table
+        df_warranties = get_data("SELECT * FROM warranties")
+        
+        if not df_warranties.empty:
+            selected_pid = st.selectbox("Select Product ID", df_warranties['product_id'].unique())
+            
+            # Filter data
+            product_info = df_warranties[df_warranties['product_id'] == selected_pid].iloc[0]
+            
+            # Convert date objects to strings to fix the TypeError
+            start_date_str = str(product_info['warranty_start_date'])
+            end_date_str = str(product_info['warranty_end_date'])
+            
+            # Display details
+            col1, col2 = st.columns(2)
+            with col1:
+                # Use st.write or st.text instead of st.metric if you don't need numeric change indicators,
+                # or just pass the stringified date:
+                st.metric("Warranty Start", start_date_str)
+                st.metric("Warranty End", end_date_str)
+            with col2:
+                st.info(f"**Terms Summary:**\n\n{product_info['terms_summary']}")
+        else:
+            st.warning("No warranty data found in the database.")
 
     # --- Service Request Page ---
     elif choice == "Add Service Request":
@@ -121,7 +203,7 @@ else:
             deadline = st.date_input("Service Deadline")
             if st.form_submit_button("Submit"):
                 query = text("INSERT INTO service_requests (product_id, issue_description, status, deadline, request_date) VALUES (:pid, :desc, 'Pending', :deadline, :req_date)")
-                with get_db_connection().begin() as conn:
+                with get_db_engine().begin() as conn:
                     conn.execute(query, {"pid": prod_id, "desc": issue, "deadline": deadline, "req_date": date.today()})
                 st.success("Request saved!"); st.rerun()
         st.dataframe(get_data("SELECT * FROM service_requests"))
@@ -154,7 +236,7 @@ else:
             
             if "add this" in query.lower() and uploaded_file and st.button("Confirm: Log to Database"):
                 insert_cmd = model.generate_content(f"Convert info to SQL INSERT: {response.text}").text
-                with get_db_connection().begin() as conn:
+                with get_db_engine().begin() as conn:
                     conn.execute(text(insert_cmd))
                 st.success("Product logged!")
 
@@ -170,7 +252,7 @@ else:
                 if st.form_submit_button("Update Status"):
                     # 1. Update the main status using request_id
                     query = text("UPDATE service_requests SET status = :status WHERE request_id = :id")
-                    with get_db_connection().begin() as conn:
+                    with get_db_engine().begin() as conn:
                         conn.execute(query, {"status": new_status, "id": req_id})
                     
                     if new_status == "Completed":
@@ -178,7 +260,7 @@ else:
                             INSERT INTO completed_requests (request_id, completion_date) 
                             VALUES (:id, :date)
                         """)
-                        with get_db_connection().begin() as conn:
+                        with get_db_engine().begin() as conn:
                             conn.execute(history_query, {"id": req_id, "date": date.today()})
                         st.toast("Request moved to Completed History! 🎉", icon="✅")
                     else:
