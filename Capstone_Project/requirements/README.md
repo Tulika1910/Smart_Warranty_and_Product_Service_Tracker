@@ -1,131 +1,299 @@
-# Project Title
-
-Smart_Warranty_and_Product_Service_Tracker
+# Smart Warranty and Product Service Tracker
 
 ## Problem Statement
 
-_Describe the problem this project solves._
+Managing warranties, product ownership records, and service requests manually often results in missed warranty claims, delayed servicing, lost invoices, and poor customer experience. Individuals and organizations frequently struggle to keep track of multiple products purchased from different vendors.
 
-- What is the main challenge or business/user need?
-- Who is affected by this problem?
-- Why is the problem important?
-- What outcome should the project achieve?
+The **Smart Warranty and Product Service Tracker** provides a centralized platform to store product information, monitor warranty status, raise service requests, and receive AI-powered assistance for warranty-related queries. The system also visualizes product and service data to help users monitor their assets efficiently.
 
-## Dataset / Reference Source
+### Objectives
 
-_Add details about the dataset, files, or reference sources used in the project._
+- Digitize warranty and product records.
+- Track warranty expiration dates.
+- Simplify service request management.
+- Provide AI-assisted warranty support.
+- Offer an interactive dashboard for monitoring products and services.
+
+---
+
+# Dataset / Reference Source
+
+The project uses structured CSV datasets along with a MySQL database.
 
 | Source / File | Description | Format | Notes |
 | --- | --- | --- | --- |
-| `data/products.csv` | _Add description_ | CSV | _Add notes_ |
-| `data/warranties.csv` | _Add description_ | CSV | _Add notes_ |
-| `data/service_requests.csv` | _Add description_ | CSV | _Add notes_ |
-| `data/documents.csv` | _Add description_ | CSV | _Add notes_ |
+| `data/products.csv` | Product inventory with purchase and warranty details | CSV | Imported into MySQL |
+| `data/warranties.csv` | Warranty information for products | CSV | Used for warranty tracking |
+| `data/service_requests.csv` | Customer service request records | CSV | Displays request status |
+| `data/documents.csv` | Product document metadata | CSV | Invoice and warranty document references |
+| `smart_warranty_database.sql` | Database schema | SQL | Creates database tables |
+| `setup_database.sql` | Database initialization | SQL | Initial database setup |
 
-## Tools Used
+---
 
-_List the tools, frameworks, libraries, and platforms used._
+# Tools Used
 
-- Programming language: _Add here_
-- Data processing: _Add here_
-- AI / ML tools: _Add here_
-- Agent framework: _Add here_
-- Backend framework: _Add here_
-- Frontend framework: _Add here_
-- Database / storage: _Add here_
-- Version control: _Add here_
-- Other tools: _Add here_
+- **Programming Language:** Python 3
+- **Frontend:** Streamlit
+- **Backend:** Python
+- **Database:** MySQL
+- **ORM / Database Connector:** SQLAlchemy
+- **Data Processing:** Pandas
+- **Visualization:** Plotly Express
+- **Authentication:** Firebase Authentication (Pyrebase)
+- **AI Integration:** Google Gemini API
+- **Document Processing:** PyMuPDF
+- **Speech Input:** streamlit-mic-recorder
+- **Image Processing:** Pillow (PIL)
+- **Version Control:** Git & GitHub
 
-## Project Workflow
+---
 
-_Describe the main workflow from data input to final output._
+# Project Workflow
 
-1. Data collection / dataset preparation: _Add details_
-2. Data cleaning and preprocessing: _Add details_
-3. Feature extraction or indexing: _Add details_
-4. AI / ML / agent processing: _Add details_
-5. User interaction or application flow: _Add details_
-6. Output generation: _Add details_
-7. Evaluation and improvement: _Add details_
+### 1. Data Collection
 
-## AI / ML / Agent / Software Component
+Product, warranty, document, and service request information is maintained using CSV files and imported into the MySQL database.
 
-_Explain the core technical component of the project._
+### 2. Database Initialization
 
-- Component name: _Add here_
-- Purpose: _Add here_
-- Inputs: _Add here_
-- Outputs: _Add here_
-- Model / algorithm / logic used: _Add here_
-- Key features: _Add here_
-- Integration with other modules: _Add here_
+SQL scripts create the required database tables before application startup.
 
-## How To Run The Project
+### 3. User Authentication
 
-_Add setup and execution instructions._
+Firebase Authentication provides secure login and signup functionality.
 
-### Prerequisites
+### 4. Dashboard
 
-- _Add required software_
-- _Add required packages_
-- _Add environment variables, if any_
+After authentication, users access a dashboard displaying:
 
-### Installation
+- Product inventory
+- Warranty statistics
+- Service request analytics
+- Warranty expiry visualization
 
-```bash
-# Add installation commands here
+### 5. Service Request Management
+
+Users can submit and track service requests for registered products.
+
+### 6. AI Warranty Assistant
+
+The integrated Gemini AI assistant answers warranty-related questions and assists users in understanding product coverage and servicing information.
+
+### 7. Data Visualization
+
+Interactive Plotly charts provide insights into:
+
+- Warranty expiry timeline
+- Service request status
+- Product inventory overview
+
+---
+
+# AI / Software Component
+
+### Component Name
+
+Gemini AI Warranty Assistant
+
+### Purpose
+
+Provide intelligent responses related to product warranties, servicing, and maintenance.
+
+### Inputs
+
+- User questions
+- Product information
+- Warranty details
+
+### Outputs
+
+- Warranty guidance
+- Product support suggestions
+- AI-generated assistance
+
+### Technologies Used
+
+- Google Gemini API
+- Prompt-based Generative AI
+- Streamlit Chat Interface
+
+### Key Features
+
+- AI-powered warranty assistance
+- Natural language interaction
+- Product information guidance
+- Customer support enhancement
+
+---
+
+# Features
+
+- Secure Login & Registration
+- Product Inventory Management
+- Warranty Tracking
+- Service Request Submission
+- Interactive Dashboard
+- Warranty Expiry Monitoring
+- AI Warranty Assistant
+- CSV to Database Synchronization
+- Data Visualization
+- Responsive Streamlit Interface
+
+---
+
+# Project Structure
+
+```
+Capstone_Project/
+│
+├── app/
+│   ├── app.py
+│   ├── auth.py
+│   └── database_initialise.py
+│
+├── data/
+│   ├── products.csv
+│   ├── warranties.csv
+│   ├── service_requests.csv
+│   └── documents.csv
+│
+├── requirements/
+│   └── README.md
+│
+├── setup_database.sql
+├── smart_warranty_database.sql
+└── import_csv.py
 ```
 
-### Run Commands
+---
+
+# How To Run The Project
+
+## Prerequisites
+
+Install:
+
+- Python 3.10+
+- MySQL Server
+- Git
+- Streamlit
+
+Configure:
+
+- Firebase credentials
+- Google Gemini API Key
+- MySQL database
+
+---
+
+## Installation
 
 ```bash
-# Add commands to run the project here
+git clone <repository-url>
+
+cd Capstone_Project
+
+pip install -r requirements.txt
 ```
 
-### Expected Output
+---
 
-_Describe what the user should see after running the project._
+## Database Setup
 
-## Demo Screenshots
+Create the database using:
 
-_Add screenshots or image links here._
+```sql
+setup_database.sql
+```
+
+or
+
+```sql
+smart_warranty_database.sql
+```
+
+---
+
+## Run the Application
+
+```bash
+cd app
+
+streamlit run app.py
+```
+
+---
+
+## Expected Output
+
+After launching the application:
+
+- Login / Signup page
+- Interactive dashboard
+- Product inventory
+- Warranty analytics
+- Service request management
+- AI warranty assistant
+- Live product tracking interface
+
+---
+
+# Demo Screenshots
 
 | Screen | Description | Screenshot |
 | --- | --- | --- |
-| Home / Main Screen | _Add description_ | _Add image path_ |
-| Feature Demo | _Add description_ | _Add image path_ |
-| Results Screen | _Add description_ | _Add image path_ |
+| Login Page | User Authentication | Add Screenshot |
+| Dashboard | Warranty Overview | Add Screenshot |
+| Product Inventory | Product Details | Add Screenshot |
+| Service Request | Submit Service Request | Add Screenshot |
+| AI Assistant | Gemini Chat Interface | Add Screenshot |
 
-## Results And Insights
+---
 
-_Summarize the project results, findings, or observations._
+# Results and Insights
 
-- Result 1: _Add here_
-- Result 2: _Add here_
-- Result 3: _Add here_
+- Successfully centralizes warranty and product management.
+- Reduces manual tracking of warranties and service requests.
+- AI-powered assistance improves user experience.
+- Interactive dashboards simplify product monitoring.
+- Database-backed architecture enables scalable record management.
 
-## Limitations
+---
 
-_List current limitations or assumptions._
+# Limitations
 
-- _Add limitation_
-- _Add limitation_
-- _Add limitation_
+- Requires MySQL database configuration.
+- Gemini API key and Firebase credentials must be configured manually.
+- Limited document management features in the current version.
+- Currently designed for desktop web usage through Streamlit.
 
-## Future Improvements
+---
 
-_List possible enhancements for future work._
+# Future Improvements
 
-- _Add improvement_
-- _Add improvement_
-- _Add improvement_
+- Email and SMS warranty expiry notifications.
+- OCR-based invoice upload.
+- QR code product registration.
+- Mobile application support.
+- Multi-user organization management.
+- Predictive maintenance using machine learning.
+- Cloud deployment with Docker and CI/CD.
+- Integration with manufacturer APIs.
 
-## Team Member Names
+---
 
-_Add team member details._
+# Team Members
 
-| Name | Role / Responsibility |
+| Name | Role |
 | --- | --- |
-| _Team member 1_ | _Add role_ |
-| _Team member 2_ | _Add role_ |
-| _Team member 3_ | _Add role_ |
+| Tulika | Project Development |
+| Tisya | Backend & Database |
+| Ritvik | AI Integration |
+| Bhavya | Frontend & Testing |
+
+---
+
+# Conclusion
+
+The **Smart Warranty and Product Service Tracker** is a comprehensive warranty management solution that combines secure authentication, centralized product storage, AI-powered assistance, service request management, and interactive analytics. The project demonstrates the practical integration of modern web technologies, databases, visualization tools, and Generative AI to improve product lifecycle management and customer support.

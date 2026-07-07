@@ -15,137 +15,161 @@ from auth import create_user, login_user
 from database_initialise import get_db_engine
 from sync_utils import sync_warranty_data_to_csv
 
-# --- API Configuration ---
 genai.configure(api_key="YOURKEY") # Replace with your actual API key
 model = genai.GenerativeModel("gemini-3.5-flash")
 
 st.markdown(
     """
     <style>
-    @keyframes pulseGlow {
-        0%, 100% { box-shadow: 0 8px 30px rgba(17, 24, 39, 0.04); }
-        50% { box-shadow: 0 18px 40px rgba(17, 24, 39, 0.1); }
-    }
-    @keyframes floatUp {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-4px); }
-    }
-    @keyframes dynamicTint {
-        0% { background-position: 10% 10%; }
-        50% { background-position: 90% 90%; }
-        100% { background-position: 10% 10%; }
-    }
+    /* Gentle pastel background with soft blobs */
+    @keyframes pulseGlow { 0%, 100% { box-shadow: 0 8px 30px rgba(17, 24, 39, 0.04); } 50% { box-shadow: 0 18px 40px rgba(17, 24, 39, 0.1); } }
+    @keyframes floatUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes dynamicTint { 0% { background-position: 10% 10%; } 50% { background-position: 90% 90%; } 100% { background-position: 10% 10%; } }
 
     html, body, .stApp, .block-container {
-        background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 35%, #e0f2fe 70%, #f0fdf4 100%);
-        background-size: 200% 200%;
-        animation: dynamicTint 20s ease infinite;
-        color: #111827;
+        background-image:
+            radial-gradient(circle at 10% 15%, rgba(244, 114, 182, 0.10), transparent 26%),
+            radial-gradient(circle at 85% 12%, rgba(125, 211, 252, 0.12), transparent 24%),
+            radial-gradient(circle at 70% 80%, rgba(167, 243, 208, 0.10), transparent 26%),
+            radial-gradient(circle at 25% 85%, rgba(253, 230, 138, 0.10), transparent 22%),
+            linear-gradient(135deg, #fdf6fb 0%, #f0f9ff 28%, #fff7ed 48%, #f0fdf4 76%, #f7f2ff 100%);
+        background-size: 220% 220%;
+        animation: dynamicTint 26s ease infinite;
+        color: #0f172a;
         font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
+    /* Sidebar styling */
     .stSidebar {
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border-right: 1px solid rgba(229, 231, 235, 0.7);
-        box-shadow: none;
+        background: transparent !important;
+        border-right: none !important;
         padding: 22px 18px 18px 18px;
     }
 
-    .css-1d391kg, .stMarkdown, .stDataFrame table, .stTextInput>div>div>input,
-    .stDateInput>div>div>input, .stNumberInput>div>div>input,
-    .stTextArea>div>div>textarea, .stSelectbox>div>div>div>div,
-    .stFileUploader {
-        transition: all 0.25s ease;
+    /* Make panels blend with page and use subtle outlines */
+    .css-1d391kg, .stMarkdown, .stDataFrame table, div[data-testid="stMetric"], .stAlert, .stSuccess, .stWarning, .stInfo {
+        background: transparent !important;
+        border: 1px solid rgba(203, 213, 225, 0.55) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03) !important;
+        padding: 8px !important;
+        backdrop-filter: blur(8px) !important;
     }
 
+    /* Dataframe/table adjustments to remove white boxes */
+    .stDataFrame table {
+        background-color: transparent !important;
+        color: #0f172a;
+        border-collapse: separate !important;
+        border-spacing: 8px !important;
+    }
+
+    /* Buttons keep strong presence */
     .stButton>button {
         width: 100%;
         border-radius: 999px;
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        background: linear-gradient(135deg, #1f3a8a 0%, #3b82f6 100%);
         color: #ffffff;
         border: none;
-        padding: 14px 18px;
-        box-shadow: 0 12px 30px rgba(17, 24, 39, 0.08);
+        padding: 12px 18px;
+        box-shadow: 0 14px 36px rgba(59, 130, 246, 0.14);
         font-weight: 700;
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
     }
 
-    .stButton>button:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
-        box-shadow: 0 18px 35px rgba(17, 24, 39, 0.14);
-    }
-
-    .stMetric {
-        background-color: rgba(255, 255, 255, 0.82);
-        padding: 20px;
+    /* Small cards: translucent glass look */
+    .glass-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));
+        border: 1px solid rgba(203, 213, 225, 0.35);
         border-radius: 20px;
-        border: 1px solid rgba(229, 231, 235, 0.9);
-        color: #111827;
-        animation: floatUp 8s ease-in-out infinite;
-        backdrop-filter: blur(14px);
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05);
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        box-shadow: none;
+        backdrop-filter: blur(6px);
     }
 
-    .stMetric>div {
-        color: #111827;
+    .hero-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #2563eb 100%);
+        color: #ffffff;
+        border-radius: 20px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 14px 38px rgba(37,99,235,0.12);
     }
 
-    .stDataFrame table {
-        background-color: rgba(248, 250, 252, 0.92);
-        color: #111827;
-        border: 1px solid rgba(229, 231, 235, 0.95);
-        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+    .hero-card .card-title, .glass-card .card-title { font-size: 1.02rem; font-weight: 700; margin-bottom: 6px; }
+    .hero-card .card-body, .glass-card .card-body { font-size: 0.95rem; line-height: 1.5; opacity: 0.96; }
+
+    /* Status pill stays translucent */
+    .status-pill { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03)); border-radius: 999px; padding: 10px 12px; border: 1px solid rgba(226,232,240,0.5); }
+
+    /* Tabs: outlined pills, no inner text box */
+    div[data-testid="stTabs"] [role="tablist"] { gap: 8px; margin-bottom: 10px; }
+    div[data-testid="stTabs"] [role="tab"] {
+        background: transparent !important;
+        border: 1px solid rgba(203,213,225,0.75) !important;
+        border-radius: 999px !important;
+        padding: 0.55rem 0.9rem !important;
+        color: #475569 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.02) !important;
+    }
+    div[data-testid="stTabs"] [role="tab"]:hover { transform: translateY(-1px); color: #4338ca !important; }
+    div[data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+        background: linear-gradient(135deg, rgba(139,92,246,0.95) 0%, rgba(59,130,246,0.95) 100%) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+        box-shadow: 0 12px 28px rgba(99,102,241,0.12) !important;
     }
 
-    .stPlotlyChart, .stPlotlyChart>div, .stPlotlyChart>div>div,
-    .js-plotly-plot .plotly,
-    .js-plotly-plot .main-svg {
-        background-color: transparent !important;
+    /* Ensure Plotly charts render with transparent backgrounds */
+    .stPlotlyChart, .stPlotlyChart>div, .stPlotlyChart>div>div, .js-plotly-plot .plotly, .js-plotly-plot .main-svg {
+        background: transparent !important;
     }
 
-    .css-1d391kg, .stMarkdown {
-        background-color: rgba(255, 255, 255, 0.88) !important;
-        backdrop-filter: blur(10px);
-    }
+    /* Sidebar selectbox outer outline (wrapper only) */
+    div[data-testid="stSidebar"] .stSelectbox > div { border: 1.5px solid rgba(148, 163, 184, 0.85) !important; border-radius: 14px !important; padding: 3px !important; background: transparent !important; }
+    div[data-testid="stSidebar"] .stSelectbox div[role="button"] { min-height: 48px !important; padding: 0.6rem 0.9rem !important; background: transparent !important; }
+    div[data-testid="stSidebar"] .stSelectbox div[role="listbox"] { border-radius: 12px !important; border: 1px solid rgba(203,213,225,0.65) !important; }
 
-    .stTextInput>div>div>input,
-    .stDateInput>div>div>input,
-    .stNumberInput>div>div>input,
-    .stTextArea>div>div>textarea,
-    .stSelectbox>div>div>div>div {
-        background-color: #ffffff !important;
-        color: #111827 !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 0px !important;
-        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    /* Inputs: subtle underline instead of boxed white background */
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(203,213,225,0.5) !important;
+        border-radius: 6px !important;
+        padding: 8px 6px !important;
     }
+    .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus { outline: none !important; border-bottom: 1px solid rgba(59,130,246,0.3) !important; }
 
-    .stTextInput>div>div>input:focus,
-    .stDateInput>div>div>input:focus,
-    .stNumberInput>div>div>input:focus,
-    .stTextArea>div>div>textarea:focus,
-    .stSelectbox>div>div>div>div:focus {
-        outline: 2px solid rgba(59, 130, 246, 0.25) !important;
-        border-color: #93c5fd !important;
-    }
-
-    .stFileUploader {
-        background-color: rgba(255, 255, 255, 0.92) !important;
-        border: 1px solid rgba(229, 231, 235, 0.95);
-        border-radius: 18px;
-        padding: 16px;
-    }
-
-    .stAlert {
-        border-radius: 16px !important;
-        border: 1px solid #d1d5db !important;
-    }
     </style>
+
     """,
     unsafe_allow_html=True,
 )
+
+
+def render_status_chip(label: str, value: str, accent: str = "#2563eb"):
+    st.markdown(
+        f"""
+        <div class="status-pill">
+            <span class="pill-label">{label}</span>
+            <span class="pill-value" style="color:{accent};">{value}</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_glass_card(title: str, body: str, icon: str = "✨"):
+    st.markdown(
+        f"""
+        <div class="glass-card">
+            <div class="card-title">{icon} {title}</div>
+            <div class="card-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # --- Database Helper Functions ---
 def get_data(query, params=None):
@@ -342,7 +366,8 @@ else:
             ["Dashboard", "Warranty", "Add Service Request", "Warranty AI Agent", "Live Service Tracker"],
             key="nav_choice",
         )
-        st.markdown("---")
+        # simple divider instead of an extra boxed card
+        st.markdown("<hr style='border: none; border-top: 1px solid rgba(203,213,225,0.5); margin: 10px 0;'>", unsafe_allow_html=True)
         st.subheader("⚡ Quick View")
         df_prod = get_data("SELECT * FROM products")
         if not df_prod.empty:
@@ -360,6 +385,24 @@ else:
     # --- Dashboard Page Logic ---
     if choice == "Dashboard":
         st.title("📊 Warranty Overview")
+
+        user_label = "Guest"
+        if st.session_state.user:
+            if isinstance(st.session_state.user, dict):
+                user_label = str(st.session_state.user.get("email") or st.session_state.user.get("localId") or "Guest").split("@")[0]
+            else:
+                user_label = str(st.session_state.user).split("@")[0]
+
+        st.markdown(
+            f"""
+            <div class="hero-card">
+                <div class="card-title">✨ Welcome back, {user_label}</div>
+                <div class="card-body">Your warranty world is now brighter, faster, and easier to navigate. Track products, service requests, and upcoming coverage from a single view.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         df_prod = get_data("SELECT * FROM products")
         df_reqs = get_data(
             "SELECT * FROM service_requests WHERE user_id = :user_id",
@@ -371,12 +414,26 @@ else:
             {"user_id": current_user_id},
         )
 
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            render_status_chip("Products", str(len(df_prod)) if not df_prod.empty else "0", "#2563eb")
+        with col_b:
+            render_status_chip("Requests", str(len(df_reqs)) if not df_reqs.empty else "0", "#0f766e")
+        with col_c:
+            expiring_count = 0
+            if not df_warranty_dates.empty:
+                expiring_count = int((pd.to_datetime(df_warranty_dates["warranty_end_date"]) <= pd.Timestamp.now() + pd.Timedelta(days=30)).sum())
+            render_status_chip("Due soon", str(expiring_count), "#dc2626")
+
+        st.progress(min(1.0, (len(df_reqs) / max(len(df_prod), 1)) if not df_reqs.empty else 0.0), text="Coverage activity")
+
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Warranty Expiry Heatmap")
             if not df_warranty_dates.empty:
                 df_warranty_dates["warranty_end_date"] = pd.to_datetime(df_warranty_dates["warranty_end_date"])
                 fig1 = px.histogram(df_warranty_dates, x="warranty_end_date", title="Warranty End Date Distribution")
+                fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#0f172a')
                 st.plotly_chart(fig1, use_container_width=True)
             else:
                 st.info("No warranty end dates have been added yet for this profile.")
@@ -384,6 +441,7 @@ else:
             st.subheader("Requests Overview")
             if not df_reqs.empty:
                 fig2 = px.pie(df_reqs, names="status", title="Request Status Breakdown")
+                fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#0f172a')
                 st.plotly_chart(fig2, use_container_width=True)
 
         col3, col4 = st.columns(2)
@@ -434,20 +492,41 @@ else:
                     st.warning(f"Could not generate summary: {exc}")
 
             if submit_warranty:
-                if not product_id.strip():
-                    product_id = f"P-{uuid.uuid4().hex[:8].upper()}"
+                # Validate required fields
+                errors = []
+                if not (product_id and str(product_id).strip()):
+                    errors.append("Product ID is required.")
+                if not (product_name and str(product_name).strip()):
+                    errors.append("Product Name is required.")
+                if not (category and str(category).strip()):
+                    errors.append("Category is required.")
+                if not purchase_date:
+                    errors.append("Purchase Date is required.")
+                if not warranty_start_date:
+                    errors.append("Warranty Start Date is required.")
+                if not warranty_end_date:
+                    errors.append("Warranty End Date is required.")
+                if warranty_start_date and warranty_end_date and warranty_end_date < warranty_start_date:
+                    errors.append("Warranty End Date must be the same or after the Start Date.")
+                if price is None or price <= 0:
+                    errors.append("Price must be greater than 0.")
 
-                product_query = text(
-                    """
+                if errors:
+                    for e in errors:
+                        st.error(e)
+                    st.warning("Please correct the form before saving.")
+                else:
+                    product_query = text(
+                        """
                     INSERT INTO products (product_id, product_name, category)
                     VALUES (:product_id, :product_name, :category)
                     ON DUPLICATE KEY UPDATE
                         product_name = VALUES(product_name),
                         category = VALUES(category)
                     """
-                )
-                warranty_query = text(
-                    """
+                    )
+                    warranty_query = text(
+                        """
                     INSERT INTO warranties (
                         warranty_id,
                         product_id,
@@ -472,35 +551,35 @@ else:
                         :user_id
                     )
                     """
-                )
-
-                with get_db_engine().begin() as conn:
-                    conn.execute(
-                        product_query,
-                        {
-                            "product_id": product_id,
-                            "product_name": product_name,
-                            "category": category,
-                        },
-                    )
-                    conn.execute(
-                        warranty_query,
-                        {
-                            "warranty_id": f"W-{uuid.uuid4().hex[:8].upper()}",
-                            "product_id": product_id,
-                            "warranty_start_date": warranty_start_date,
-                            "warranty_end_date": warranty_end_date,
-                            "purchase_date": purchase_date,
-                            "price": price,
-                            "product_name": product_name,
-                            "category": category,
-                            "terms_summary": generated_terms.strip() or "AI-generated warranty summary pending.",
-                            "user_id": current_user_id,
-                        },
                     )
 
-                st.success("Warranty saved for your profile.")
-                st.rerun()
+                    with get_db_engine().begin() as conn:
+                        conn.execute(
+                            product_query,
+                            {
+                                "product_id": product_id,
+                                "product_name": product_name,
+                                "category": category,
+                            },
+                        )
+                        conn.execute(
+                            warranty_query,
+                            {
+                                "warranty_id": f"W-{uuid.uuid4().hex[:8].upper()}",
+                                "product_id": product_id,
+                                "warranty_start_date": warranty_start_date,
+                                "warranty_end_date": warranty_end_date,
+                                "purchase_date": purchase_date,
+                                "price": price,
+                                "product_name": product_name,
+                                "category": category,
+                                "terms_summary": generated_terms.strip() or "AI-generated warranty summary pending.",
+                                "user_id": current_user_id,
+                            },
+                        )
+
+                    st.success("Warranty saved for your profile.")
+                    st.rerun()
 
         df_warranties = get_data(
             """
